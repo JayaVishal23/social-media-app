@@ -1,0 +1,107 @@
+.post-card {
+  width: 95%;
+  max-width: 750px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  margin: 30px auto;
+  overflow: hidden;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  transition: transform 0.3s ease;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.profile-imgs {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #dcdcdc;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.user-info p {
+  margin: 2px 0 0 0;
+  font-size: 14px;
+  color: #888;
+}
+
+.post-content {
+  padding: 20px 24px;
+}
+
+.post-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.post-text {
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.post-images {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 16px;
+}
+
+.post-image {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  max-height: 360px;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  gap: 10px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.3s;
+}
+
+.action-btn:hover {
+  background-color: #f2f2f2;
+  color: #000;
+}
+
+.liked {
+  color: #e63946;
+}

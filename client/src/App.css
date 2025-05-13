@@ -1,0 +1,347 @@
+.container {
+  width: 95%;
+  margin-left: 2.5%;
+}
+.logout {
+  height: 30px;
+}
+
+.nav {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  margin-left: -2.5%;
+  margin-right: -2.5%;
+  padding: 0 2.5%;
+  border-bottom: 1px solid black;
+  background-color: #27548a;
+}
+.inp-search {
+  height: 40px;
+  font-size: 16px;
+  width: 40%;
+  padding: 10px;
+  /* background-color: rgba(0, 0, 0, 0.109); */
+  background-color: rgba(255, 255, 255, 0.868);
+  border: 10px;
+  border-radius: 10px;
+}
+.inp-search:focus {
+  outline: none;
+}
+.profile-img {
+  height: 30px;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 50%;
+  border: 2px solid #dcdcdc;
+}
+.logo {
+  font-size: 25px;
+  color: white;
+}
+.left-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 85vh;
+  max-width: 200px;
+  /* background-color: rgba(0, 0, 0, 0.264); */
+  /* position: fixed;
+  top: 60px;
+  height: calc(100vh - 60px); */
+}
+.left-nav button {
+  font-size: 18px;
+  padding: 10px;
+  background-color: white;
+  border: none;
+  text-align: start;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  border-radius: 10px;
+  border: #27548a solid 1px;
+  width: 100%;
+}
+
+.left-nav button:hover {
+  background-color: #27548a;
+  border-radius: 10px;
+  color: white;
+}
+
+.left-nav-1 {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.left-nav-2 {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.svg {
+  height: 25px;
+}
+
+.posts-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 90vh;
+  width: 100%;
+  overflow: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+}
+
+.posts-page::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+.home-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 90vh;
+}
+
+.posts-home {
+  width: 100%;
+  margin-left: 5%;
+  background-color: rgba(0, 0, 0, 0.109);
+
+  height: 100vh;
+  overflow-y: auto;
+  padding-top: 4%;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+}
+
+.posts-home::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.right-nav {
+  width: 60%;
+  /* position: fixed; */
+  top: 100px;
+}
+
+.active {
+  background-color: #27548a !important;
+  border-radius: 10px;
+  color: white;
+}
+
+.nav-link {
+  text-decoration: none;
+}
+/* From Here */
+
+/* .google-login {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  padding: 5px 10px;
+  gap: 20px;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #27548a;
+  border-radius: 50px;
+  margin-top: 10%;
+}
+.login-heading {
+  justify-self: flex-start;
+  text-align: center;
+  margin-top: 10px;
+  color: white;
+}
+
+.google-img {
+  height: 30px;
+  width: auto;
+}
+
+.login-page {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-image: url("./assets/img1.png");
+  background-size: cover;
+  /* background-position: center; 
+  background-repeat: no-repeat;
+}
+
+.login-v {
+  margin-top: -3.4%;
+} */
+/* Up to here */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #27548a73;
+  font-family: "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    sans-serif;
+  padding: 20px;
+}
+
+.login-card-wrapper {
+  display: flex;
+  flex-direction: row;
+  /* background: #ffffff; */
+  border-radius: 12px;
+  overflow: hidden;
+  /* box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); */
+  max-width: 1600px;
+  width: 100%;
+  gap: 20px;
+}
+
+.login-image {
+  flex: 2;
+  min-height: 420px;
+  width: 100px;
+  background-image: url("./assets/image.png");
+  filter: brightness(95%);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.login-content {
+  flex: 1;
+  padding: 16px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* background-color: #f9f9f9; */
+  background: #27548a;
+  border-radius: 12px;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo-container h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.login-card {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.login-card h2 {
+  font-size: 24px;
+  color: #202124;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.login-card p {
+  color: #5f6368;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #3c4043;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.google-btn:hover {
+  background: #f8f9fa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.google-btn:active {
+  background: #f1f3f4;
+}
+
+.google-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+}
+
+.google-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.btn-text {
+  font-weight: 500;
+}
+
+.login-header {
+  position: absolute;
+  top: 30px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-header h1 {
+  color: white;
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+@media only screen and (max-width: 900px) {
+  .login-card-wrapper {
+    flex-direction: column;
+    justify-content: start;
+  }
+  .login-image {
+    height: 100px;
+    flex: 2;
+    min-height: 400px;
+    width: 100%;
+  }
+  .login-container {
+    align-items: flex-start;
+  }
+}
+@media only screen and (max-width: 700px) {
+  .login-image {
+    height: 100px;
+    flex: 2;
+    min-height: 200px;
+    width: 100%;
+  }
+}
