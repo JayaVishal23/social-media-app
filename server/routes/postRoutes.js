@@ -2,17 +2,33 @@ import express from "express";
 import Post from "../db/Postschema.js";
 import upload from "../middleware/upload.js";
 import User from "../db/Userschema.js";
+import isAuthenticated from "../middleware/isAuth.js";
 
 const router = express.Router();
 
-router.get("/allposts", async (req, res) => {
+router.get("/allposts", isAuthenticated, async (req, res) => {
   try {
+    const userId = req.user;
     let posts = await Post.find()
       .sort({ createdAt: -1 })
-      .populate("user", "username fullname profile");
-    res.status(200).json(posts);
+      .populate("user", "_id username fullname profile");
+    const newPosts = posts.map((post) => {
+      const isliked = userId.likedposts.includes(post._id);
+      const issaved = userId.savedposts.includes(post._id);
+      const isowner = post.user._id.toString() === req.user._id.toString();
+      return {
+        ...post.toObject(),
+        isliked,
+        issaved,
+        isowner,
+        numlikes: post.likes.length,
+      };
+    });
+
+    res.status(200).json(newPosts);
   } catch (err) {
     console.log("Error in postRoutes" + err);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -23,7 +39,7 @@ router.post("/createpost", upload.array("media", 5), async (req, res) => {
       type: file.mimetype.startsWith("video") ? "video" : "image",
     }));
     const newPost = new Post({
-      user: req.body.userId,
+      user: req.user._id,
       title: req.body.title,
       text: req.body.text,
       media,
@@ -34,6 +50,89 @@ router.post("/createpost", upload.array("media", 5), async (req, res) => {
   } catch (err) {
     console.log("Error in postRoutes" + err);
     res.status(401).json("Error in uploading");
+  }
+});
+
+router.post("/deletepost", isAuthenticated, async (req, res) => {
+  const userId = req.user._id;
+  const postId = req.body.postId;
+  const post = await Post.findById(postId);
+  try {
+    if (!post) {
+      return res.status(200).json({ deleted: false, message: "Not Deleted" });
+    }
+    if (userId.toString() === post.user._id.toString()) {
+      await post.deleteOne();
+      return res.status(200).json({ deleted: true, message: "Deleted" });
+    } else {
+      return res.status(200).json({ deleted: false, message: "Not Deleted" });
+    }
+  } catch (err) {
+    console.log("Error in delete post backend " + err);
+  }
+});
+
+router.post("/likeunlikeit", isAuthenticated, async (req, res) => {
+  try {
+    const postid = req.body.postId;
+    const userId = req.user._id;
+    const user = req.user;
+    const result = await Post.findById(postid);
+    if (!result) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    // console.log(userId);
+    const likedPostIds = user.likedposts.map((id) => id.toString());
+    // console.log(likedPostIds);
+    if (likedPostIds.includes(postid)) {
+      //Liked so dislike it
+      // console.log("Disliked");
+      await Post.updateOne({ _id: postid }, { $pull: { likes: userId } });
+      await User.updateOne({ _id: userId }, { $pull: { likedposts: postid } });
+      return res.status(200).json({ liked: false, message: "Unliked" });
+    } else {
+      await Post.updateOne({ _id: postid }, { $addToSet: { likes: userId } });
+      await User.updateOne(
+        { _id: userId },
+        { $addToSet: { likedposts: postid } }
+      );
+      // console.log("liked");
+      return res.status(200).json({ liked: true, message: "Liked" });
+    }
+  } catch (err) {
+    console.log("error in likeunlikeit " + err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.post("/saveunsaveit", isAuthenticated, async (req, res) => {
+  try {
+    const postid = req.body.postId;
+    const userId = req.user._id;
+    const user = req.user;
+    const result = await Post.findById(postid);
+    if (!result) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    // console.log(userId);
+    const savedPostIds = user.savedposts.map((id) => id.toString());
+    // console.log(likedPostIds);
+    if (savedPostIds.includes(postid)) {
+      //Liked so dislike it
+      console.log("unsaved");
+      await User.updateOne({ _id: userId }, { $pull: { savedposts: postid } });
+      return res.status(200).json({ saved: false, message: "Unsaved" });
+    } else {
+      await User.updateOne(
+        { _id: userId },
+        { $addToSet: { savedposts: postid } }
+      );
+      console.log("saved");
+      return res.status(200).json({ saved: true, message: "Saved" });
+    }
+  } catch (err) {
+    console.log("error in likeunlikeit " + err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

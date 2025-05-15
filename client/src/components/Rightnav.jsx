@@ -13,8 +13,7 @@ export default function Rightnav({ initialChatHistory = [] }) {
 
     const userMessage = input.trim();
 
-    // Send to server (you can change this logic)
-    const res = await fetch("/chat", {
+    const res = await fetch("http://localhost:5000/interview/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -22,7 +21,7 @@ export default function Rightnav({ initialChatHistory = [] }) {
       body: JSON.stringify({ inp: userMessage }),
     });
 
-    const data = await res.json(); // Expecting { output: "response text" }
+    const data = await res.json();
 
     setChatHistory((prev) => [
       ...prev,

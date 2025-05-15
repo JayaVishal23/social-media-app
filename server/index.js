@@ -6,6 +6,8 @@ import session from "express-session";
 import bodyParser from "body-parser";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
+import interviewRouter from "./routes/interviewbot.js";
+import autopost from "./routes/autopost.js";
 import mongoose, { mongo } from "mongoose";
 import User from "./db/Userschema.js";
 import Post from "./db/Postschema.js";
@@ -26,6 +28,7 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.json());
 // app.use(
 //   cors({
 //     origin: "http://localhost:5173",
@@ -33,6 +36,8 @@ app.use(passport.session());
 //   })
 // );
 app.use(cors({ origin: true, credentials: true }));
+app.use("/interview", interviewRouter);
+app.use("/api/autopost", autopost);
 
 mongoose
   .connect(process.env.MONGODB_CONNECTION_LINK)
