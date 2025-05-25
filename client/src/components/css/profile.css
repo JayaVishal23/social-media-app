@@ -1,0 +1,271 @@
+.full-profile-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #f1f3f5;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  margin-left: 2.5%;
+  padding-top: 5.5%;
+}
+
+.profile-card {
+  background-color: #fff;
+  border-radius: 15px;
+  /* box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); */
+  width: 80%;
+  height: 100vh;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-main-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #27548a;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.profile-details p {
+  font-size: 15px;
+  color: #333;
+  margin: 2px 0;
+}
+
+.profile-follow-stats {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.follow-box {
+  text-align: center;
+  cursor: pointer;
+  padding: 5px 40px;
+}
+
+.follow-count {
+  font-size: 20px;
+  font-weight: bold;
+  color: #27548a;
+}
+
+.follow-label {
+  font-size: 14px;
+  color: #555;
+}
+
+.profile-edt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.edit-btn-profile {
+  background: transparent;
+  padding: 8px 20px;
+  border: 0;
+  background-color: #27548a;
+  color: white;
+  font-size: 16px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.svg-edt {
+  height: 16px;
+}
+
+.follow-list {
+  width: 50%;
+  margin-left: 25%;
+}
+
+.follower-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 5px 0;
+  padding: 5px;
+  /* border-bottom: 1px solid #e0e0e0; */
+  border: 2px black solid;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  background-color: #55555517;
+}
+.f-t {
+  justify-content: space-between;
+}
+
+.avatar-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.follow-box-selected {
+  background-color: #27548a3e;
+  color: white;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+.profile-user {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.edit-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: start;
+  align-items: flex-start;
+  border: 2px solid #27548a;
+  width: 80%;
+  border-radius: 20px;
+  height: 90%;
+  background-color: #27548a2d;
+}
+
+.edit-container label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 800;
+  font-size: 18px;
+  width: 50%;
+
+  gap: 20px;
+}
+
+.edit-container label input {
+  height: 30px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-top: 5px;
+  border: 0;
+}
+.edit-container label input:focus {
+  background-color: #27548ac6;
+  border: 0;
+  color: white;
+}
+
+.done-btn-edit {
+  padding: 5px 20px;
+  font-size: 18px;
+  background: transparent;
+  background-color: #27548a;
+  color: white;
+  cursor: pointer;
+  border: 0;
+  border-radius: 20px;
+  align-self: flex-end;
+  margin-right: 50%;
+  margin-top: 40px;
+}
+.done-btn-edit:hover {
+  background-color: #011d41b2;
+}
+
+.cmt-main-comments {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cmt-box-profile {
+  /* background-color: #27548a; */
+  height: 50px;
+  border: 0;
+}
+.cmt-profile-image {
+  height: 30px;
+  width: 30px;
+}
+.cmt-text {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cmt-user h3 {
+  font-size: 14px;
+}
+.cmt-user p {
+  font-size: 14px;
+}
+
+.cmt-main {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid black;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  background-color: #3333332c;
+}
+
+.comment-foot {
+  background-color: #27548a;
+  margin: 10px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+  padding-left: 5%;
+  padding-right: 5%;
+  display: flex;
+  margin-bottom: 0;
+}
+
+.cmt-input {
+  padding: 4px;
+  font-size: 16px;
+  width: 90%;
+  border-radius: 10px;
+}
+
+.cmt-send {
+  width: 10%;
+  padding: 7px;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.cmt-send:hover {
+  background-color: rgb(210, 207, 207);
+}

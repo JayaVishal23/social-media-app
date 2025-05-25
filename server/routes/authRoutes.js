@@ -26,7 +26,12 @@ router.get("/logout", (req, res) => {
 
 router.get("/check", (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).json({ authenticated: true, user: req.user });
+    const { googleId, ...safeUser } = req.user._doc;
+
+    res.status(200).json({
+      authenticated: true,
+      user: safeUser,
+    });
   } else {
     res.status(401).json({ authenticated: false });
   }

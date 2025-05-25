@@ -92,6 +92,9 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chat-footer button:hover {
@@ -107,4 +110,8 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.svg-send {
+  height: 18px;
 }

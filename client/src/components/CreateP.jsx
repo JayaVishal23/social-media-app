@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaImage, FaVideo, FaTimes } from "react-icons/fa";
 import "./css/createposts.css";
 
@@ -10,8 +10,44 @@ const CreateP = () => {
   const [media, setMedia] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [edit, setEdit] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const { postId } = useParams();
+
+  useEffect(() => {
+    if (postId) {
+      console.log(postId);
+      setEdit(true);
+      getposttoedit();
+    }
+  }, [postId]);
+
+  const getposttoedit = async () => {
+    try {
+      const post = await axios.post(
+        "http://localhost:5000/api/posts/getpost",
+        { postid: postId },
+        { withCredentials: true }
+      );
+      console.log(post.data);
+
+      setText(post.data.text);
+      setTitle(post.data.title);
+      if (post.data.media && Array.isArray(post.data.media)) {
+        const loadedMedia = post.data.media.map((item) => ({
+          preview: typeof item === "string" ? item : item.url, // fallback
+          type: (typeof item === "string" ? item : item.url)?.includes("video")
+            ? "video"
+            : "image",
+          file: null,
+        }));
+        setMedia(loadedMedia);
+      }
+    } catch (err) {
+      console.log("Error in getPost frontend" + err);
+    }
+  };
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -48,17 +84,27 @@ const CreateP = () => {
       media.forEach((item) => {
         formData.append("media", item.file);
       });
+      if (edit) {
+        formData.append("postid", postId);
+      }
+      const url = edit
+        ? `http://localhost:5000/api/posts/updatepost/${postId}`
+        : `http://localhost:5000/api/posts/createpost`;
 
-      const response = await axios.post(
-        "http://localhost:5000/api/posts/createpost",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
+      const config = {
+        method: edit ? "put" : "post",
+        url,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      };
+
+      const response = await axios(config);
+      setTitle("");
+      setText("");
+      setMedia([]);
 
       if (response.status === 201) {
         navigate("/home");
@@ -110,7 +156,10 @@ const CreateP = () => {
                 <img src={item.preview} alt={`Preview ${index}`} />
               ) : (
                 <video controls>
-                  <source src={item.preview} type={item.file.type} />
+                  <source
+                    src={item.preview}
+                    type={item.file.type || "video/mp4"}
+                  />
                   Your browser does not support the video tag.
                 </video>
               )}

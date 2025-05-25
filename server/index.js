@@ -1,6 +1,7 @@
 import express from "express";
 import authRoutes from "./routes/authRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import env from "dotenv";
 import session from "express-session";
 import bodyParser from "body-parser";
@@ -46,6 +47,7 @@ mongoose
 
 app.use("/auth", authRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/", async (req, res) => {
   const users = await User.find();

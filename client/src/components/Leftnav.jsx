@@ -58,7 +58,7 @@ const Leftnav = () => {
             Create Posts
           </button>
         </Link>
-        <Link to="/interview" className="nav-link">
+        {/* <Link to="/interview" className="nav-link">
           <button className={isActive("/interview") ? "active" : ""}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -76,7 +76,7 @@ const Leftnav = () => {
             </svg>
             Interview
           </button>
-        </Link>
+        </Link> */}
         <Link to="/vautopost" className="nav-link">
           <button className={isActive("/vautopost") ? "active" : ""}>
             <svg
@@ -122,7 +122,7 @@ const Leftnav = () => {
             Profile
           </button>
         </Link>
-        <Link to="/settings" className="nav-link">
+        {/* <Link to="/settings" className="nav-link">
           <button className={isActive("/settings") ? "active" : ""}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -140,7 +140,7 @@ const Leftnav = () => {
             </svg>
             Settings
           </button>
-        </Link>
+        </Link> */}
         <Link to="http://localhost:5000/auth/logout" className="nav-link">
           <button
             className={isActive("/logout") ? "active" : ""}

@@ -44,6 +44,7 @@ const Posts = () => {
           issaved={post.issaved}
           isowner={post.isowner}
           refreshposts={fetchPosts}
+          isfollowing={post.isfollowing}
         />
       ))}
     </div>

@@ -8,19 +8,21 @@ const router = express.Router();
 
 router.get("/allposts", isAuthenticated, async (req, res) => {
   try {
-    const userId = req.user;
+    const user = req.user;
     let posts = await Post.find()
       .sort({ createdAt: -1 })
       .populate("user", "_id username fullname profile");
     const newPosts = posts.map((post) => {
-      const isliked = userId.likedposts.includes(post._id);
-      const issaved = userId.savedposts.includes(post._id);
+      const isliked = user.likedposts.includes(post._id);
+      const issaved = user.savedposts.includes(post._id);
       const isowner = post.user._id.toString() === req.user._id.toString();
+      const isfollowing = user.following.includes(post.user._id.toString());
       return {
         ...post.toObject(),
         isliked,
         issaved,
         isowner,
+        isfollowing,
         numlikes: post.likes.length,
       };
     });
@@ -28,6 +30,41 @@ router.get("/allposts", isAuthenticated, async (req, res) => {
     res.status(200).json(newPosts);
   } catch (err) {
     console.log("Error in postRoutes" + err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.post("/getpost", isAuthenticated, async (req, res) => {
+  try {
+    const postId = req.body.postid.toString();
+    let post = await Post.findById(postId)
+      .populate("user", "_id username fullname profile")
+      .populate("comments.user", "_id username fullname profile");
+    res.status(200).json(post);
+  } catch (err) {
+    console.log("Error in getPost" + err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.put("/addcomment", async (req, res) => {
+  try {
+    const postId = req.body.postId.toString();
+    const comment = req.body.comment;
+    let post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    const cmt = {
+      text: comment,
+      user: req.user._id,
+    };
+
+    post.comments.push(cmt);
+
+    await post.save();
+    res.status(200).json(post);
+  } catch (err) {
+    console.log("Error in add Comment" + err);
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -47,6 +84,29 @@ router.post("/createpost", upload.array("media", 5), async (req, res) => {
 
     await newPost.save();
     res.status(201).json(newPost);
+  } catch (err) {
+    console.log("Error in postRoutes" + err);
+    res.status(401).json("Error in uploading");
+  }
+});
+
+router.put("/updatepost/:id", upload.array("media", 5), async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const media = req.files.map((file) => ({
+      url: file.path,
+      type: file.mimetype.startsWith("video") ? "video" : "image",
+    }));
+
+    let post = await Post.findById(postId);
+    post.title = req.body.title;
+    post.text = req.body.text;
+
+    const combinedMedia = [...post.media, ...media];
+
+    post.media = combinedMedia;
+    await post.save();
+    res.status(201).json(post);
   } catch (err) {
     console.log("Error in postRoutes" + err);
     res.status(401).json("Error in uploading");
