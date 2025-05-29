@@ -58,7 +58,7 @@ const Nav = () => {
   return (
     <div className="container cont-nav">
       <ul className="nav">
-        <li className="logo">Logo</li>
+        <li className="logo">SocialMedia</li>
         <input
           type="text"
           className="inp-search"

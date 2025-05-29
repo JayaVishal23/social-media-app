@@ -16,7 +16,8 @@ import cors from "cors";
 import "./routes/passport.js";
 
 const app = express();
-const port = 5000;
+
+const port = process.env.PORT || 5000;
 
 env.config();
 app.use(
