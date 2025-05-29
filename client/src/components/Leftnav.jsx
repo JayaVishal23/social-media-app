@@ -1,13 +1,15 @@
 import React from "react";
 import Home from "./Home";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import dotenv from "dotenv";
 
 const Leftnav = () => {
+  const backend = import.meta.env.VITE_API_URL;
   const location = useLocation();
   const navigate = useNavigate();
   const logout = async () => {
     try {
-      await axios.get("http://localhost:5000/auth/logout", {
+      await axios.get(`${backend}/auth/logout`, {
         withCredentials: true,
       });
       navigate("/");

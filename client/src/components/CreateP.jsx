@@ -3,8 +3,10 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaImage, FaVideo, FaTimes } from "react-icons/fa";
 import "./css/createposts.css";
+import dotenv from "dotenv";
 
 const CreateP = () => {
+  const backend = import.meta.env.VITE_API_URL;
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [media, setMedia] = useState([]);
@@ -26,7 +28,7 @@ const CreateP = () => {
   const getposttoedit = async () => {
     try {
       const post = await axios.post(
-        "http://localhost:5000/api/posts/getpost",
+        `${backend}/api/posts/getpost`,
         { postid: postId },
         { withCredentials: true }
       );
@@ -88,8 +90,8 @@ const CreateP = () => {
         formData.append("postid", postId);
       }
       const url = edit
-        ? `http://localhost:5000/api/posts/updatepost/${postId}`
-        : `http://localhost:5000/api/posts/createpost`;
+        ? `${backend}/api/posts/updatepost/${postId}`
+        : `${backend}/api/posts/createpost`;
 
       const config = {
         method: edit ? "put" : "post",

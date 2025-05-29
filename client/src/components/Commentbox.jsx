@@ -3,8 +3,10 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import Profile from "../assets/profile-user-svgrepo-com.svg";
+import dotenv from "dotenv";
 
 const Commentbox = ({ postId, isfollowing }) => {
+  const backend = import.meta.env.VITE_API_URL;
   const [commentText, setCommentText] = useState("");
   const [prevComments, setPrevComments] = useState([]);
   const [follow, setFollow] = useState(isfollowing);
@@ -12,7 +14,7 @@ const Commentbox = ({ postId, isfollowing }) => {
   useEffect(() => {
     const commentfunction = async () => {
       const res = await axios.post(
-        "http://localhost:5000/api/posts/getpost",
+        `${backend}/api/posts/getpost`,
         { postid: postId },
         { withCredentials: true }
       );
@@ -26,13 +28,13 @@ const Commentbox = ({ postId, isfollowing }) => {
   const addCommment = async () => {
     try {
       const result = await axios.put(
-        "http://localhost:5000/api/posts/addcomment",
+        `${backend}/api/posts/addcomment`,
         { postId: postId, comment: commentText },
         { withCredentials: true }
       );
       setCommentText("");
       const res = await axios.post(
-        "http://localhost:5000/api/posts/getpost",
+        `${backend}/api/posts/getpost`,
         { postid: postId },
         { withCredentials: true }
       );

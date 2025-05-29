@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useEffect } from "react";
 import "../components/css/profile.css";
 import p_photo from "../assets/profile.png";
+import dotenv from "dotenv";
 
 const Profile = () => {
+  const backend = import.meta.env.VITE_API_URL;
   const [fetched, setFetched] = useState(false);
   const [user, setUser] = useState(null);
   const [following, setFollowing] = useState(false);
@@ -39,12 +41,9 @@ const Profile = () => {
   }, [user]);
   const fetchUser = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/users/getuserself",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${backend}/api/users/getuserself`, {
+        withCredentials: true,
+      });
       setFetched(true);
       setUser(response.data.user || response.data);
     } catch (error) {
@@ -79,7 +78,7 @@ const Profile = () => {
   const editprofilebackend = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/users/updateuser/${user._id}`,
+        `${backend}/api/users/updateuser/${user._id}`,
         {
           username: changed.username,
           email: user.email,

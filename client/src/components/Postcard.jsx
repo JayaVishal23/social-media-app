@@ -14,6 +14,7 @@ import "../components/css/posts.css";
 import Profile from "../assets/profile-user-svgrepo-com.svg";
 import CreateP from "./CreateP";
 import Commentbox from "./Commentbox";
+import dotenv from "dotenv";
 
 const PostCard = ({
   title,
@@ -28,6 +29,7 @@ const PostCard = ({
   refreshposts,
   isfollowing,
 }) => {
+  const backend = import.meta.env.VITE_API_URL;
   const [liked, setLiked] = useState(isliked);
   const [saved, setSaved] = useState(issaved);
   const [extended, setExtend] = useState(false);
@@ -51,7 +53,7 @@ const PostCard = ({
   const likeunlikeit = async () => {
     try {
       const result = await axios.post(
-        "http://localhost:5000/api/posts/likeunlikeit",
+        `${backend}/api/posts/likeunlikeit`,
         { postId: postId },
         { withCredentials: true }
       );
@@ -73,7 +75,7 @@ const PostCard = ({
   const saveunsaveit = async () => {
     try {
       const result = await axios.post(
-        "http://localhost:5000/api/posts/saveunsaveit",
+        `${backend}/api/posts/saveunsaveit`,
         { postId: postId },
         { withCredentials: true }
       );
@@ -92,7 +94,7 @@ const PostCard = ({
   const followunfollow = async () => {
     try {
       const result = await axios.post(
-        "http://localhost:5000/api/users/followunfollow",
+        `${backend}/api/users/followunfollow`,
         { userId: user._id },
         { withCredentials: true }
       );
@@ -121,7 +123,7 @@ const PostCard = ({
       );
       if (!confirmDelete) return;
       const result = await axios.post(
-        "http://localhost:5000/api/posts/deletepost",
+        `${backend}/api/posts/deletepost`,
         { postId: postId },
         { withCredentials: true }
       );

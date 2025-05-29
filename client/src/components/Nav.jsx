@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import Profile from "../assets/profile-user-svgrepo-com.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import dotenv from "dotenv";
 
 const Nav = () => {
+  const backend = import.meta.env.VITE_API_URL;
   const [searchItem, setSearchItem] = useState("");
   const [results, setResults] = useState([]);
   const [curruser, setCurrUser] = useState("");
@@ -27,13 +29,10 @@ const Nav = () => {
 
   const finduser = async (txt) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/users/search`,
-        {
-          params: { que: txt },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${backend}/api/users/search`, {
+        params: { que: txt },
+        withCredentials: true,
+      });
       setResults(response.data);
     } catch (err) {
       console.log(err);
@@ -41,12 +40,9 @@ const Nav = () => {
   };
   const finduserself = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/getuserself`,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.get(`${backend}/api/users/getuserself`, {
+        withCredentials: true,
+      });
       setCurrUser(res.data);
     } catch (err) {
       console.log(err);

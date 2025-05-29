@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import dotenv from "dotenv";
 
 const Userprofile = () => {
+  const backend = import.meta.env.VITE_API_URL;
   const [fetched, setFetched] = useState(false);
   const [user, setUser] = useState(null);
   const [following, setFollowing] = useState(false);
@@ -19,7 +21,7 @@ const Userprofile = () => {
   const fetchUser = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/users/getuser",
+        `${backend}/api/users/getuser`,
         { userId },
         {
           withCredentials: true,

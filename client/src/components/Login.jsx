@@ -1,8 +1,10 @@
 import React from "react";
+import dotenv from "dotenv";
 
 const Login = () => {
+  const backend = import.meta.env.VITE_API_URL;
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/auth/google";
+    window.location.href = `${backend}/auth/google`;
   };
 
   return (

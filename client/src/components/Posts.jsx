@@ -2,8 +2,10 @@ import React from "react";
 import axios from "axios";
 import PostCard from "./Postcard";
 import { useState, useEffect } from "react";
+import dotenv from "dotenv";
 
 const Posts = () => {
+  const backend = import.meta.env.VITE_API_URL;
   const [posts, setPosts] = useState([]);
   const [curUser, setCurUser] = useState(null);
 
@@ -13,13 +15,10 @@ const Posts = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/posts/allposts",
-        {
-          withCredentials: true,
-        }
-      );
-      const curr = await axios.get("http://localhost:5000/auth/check", {
+      const response = await axios.get(`${backend}/api/posts/allposts`, {
+        withCredentials: true,
+      });
+      const curr = await axios.get(`${backend}/auth/check`, {
         withCredentials: true,
       });
       setCurUser(curr.data);

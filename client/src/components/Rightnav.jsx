@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./css/rightnav.css";
+import dotenv from "dotenv";
 
 export default function Rightnav({ initialChatHistory = [] }) {
+  const backend = import.meta.env.VITE_API_URL;
   const [chatHistory, setChatHistory] = useState(initialChatHistory);
   const [input, setInput] = useState("");
   const chatBodyRef = useRef(null);
@@ -13,7 +15,7 @@ export default function Rightnav({ initialChatHistory = [] }) {
 
     const userMessage = input.trim();
 
-    const res = await fetch("http://localhost:5000/interview/api/chat", {
+    const res = await fetch(`${backend}/interview/api/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

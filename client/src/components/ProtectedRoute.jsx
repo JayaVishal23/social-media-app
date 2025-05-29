@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
+import dotenv from "dotenv";
 
 const ProtectedRoute = ({ children }) => {
+  const backend = import.meta.env.VITE_API_URL;
   const [auth, setAuth] = useState(null);
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/auth/check", { withCredentials: true })
+      .get(`${backend}/auth/check`, { withCredentials: true })
       .then((res) => setAuth(res.data.authenticated))
       .catch(() => setAuth(false));
   }, []);
