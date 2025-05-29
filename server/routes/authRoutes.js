@@ -1,7 +1,12 @@
 import express from "express";
 import passport from "passport";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = express.Router();
+
+const frontend = process.env.FRONTEND_URL;
 
 router.post("/login", (req, res) => {});
 
@@ -14,13 +19,13 @@ router.get(
   "/google/callback",
   passport.authenticate("google", {
     failureRedirect: "/",
-    successRedirect: "http://localhost:5173/home",
+    successRedirect: `${frontend}/home`,
   })
 );
 
 router.get("/logout", (req, res) => {
   req.logout(() => {
-    res.redirect("http://localhost:5173/");
+    res.redirect(`${frontend}/`);
   });
 });
 
