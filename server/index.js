@@ -34,13 +34,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
-app.use(
-  cors({
-    origin: `${frontend}`,
-    credentials: true,
-  })
-);
-// app.use(cors({ origin: true, credentials: true }));
+// app.use(
+//   cors({
+//     origin: `${frontend}`,
+//     credentials: true,
+//   })
+// );
+app.use(cors({ origin: true, credentials: true }));
 app.use("/interview", interviewRouter);
 app.use("/api/autopost", autopost);
 
