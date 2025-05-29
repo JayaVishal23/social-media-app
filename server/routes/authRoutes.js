@@ -17,10 +17,11 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/",
-    successRedirect: `${frontend}/home`,
-  })
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    const frontend = process.env.FRONTEND_URL;
+    res.redirect(`${frontend}/home`);
+  }
 );
 
 router.get("/logout", (req, res) => {
