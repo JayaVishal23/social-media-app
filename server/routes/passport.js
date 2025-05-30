@@ -6,14 +6,15 @@ import env from "dotenv";
 env.config();
 
 let counter = 100;
+const frontend = process.env.FRONTEND_URL;
+const backend = process.env.BACKEND_URL;
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL:
-        "https://social-media-vish.onrender.com/auth/google/callback",
+      callbackURL: `${backend}/auth/google/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

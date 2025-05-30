@@ -34,13 +34,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
-// app.use(
-//   cors({
-//     origin: `${frontend}`,
-//     credentials: true,
-//   })
-// );
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+  cors({
+    origin: `${frontend}`,
+    credentials: true,
+  })
+);
+// app.use(cors({ origin: true, credentials: true }));
 app.use("/interview", interviewRouter);
 app.use("/api/autopost", autopost);
 
@@ -59,6 +59,11 @@ app.get("/", async (req, res) => {
   res.send("Done!").status(200);
 });
 
+app.get("/home", (req, res) => {
+  alert("hello");
+  console.log("Hello");
+});
+
 app.listen(port, () => {
-  console.log("Listening");
+  console.log("Listening on port " + port);
 });
