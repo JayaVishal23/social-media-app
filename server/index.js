@@ -28,6 +28,10 @@ app.use(
     secret: process.env.SECRET_SESSION,
     saveUninitialized: true,
     resave: false,
+    cookie: {
+      secure: true,
+      sameSite: "none",
+    },
   })
 );
 app.use(bodyParser.urlencoded({ extended: true }));
