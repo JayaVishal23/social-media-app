@@ -18,6 +18,8 @@ import "./routes/passport.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 const port = process.env.PORT || 5000;
 
 env.config();
