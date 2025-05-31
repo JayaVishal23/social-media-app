@@ -4,6 +4,7 @@ import postRoutes from "./routes/postRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import env from "dotenv";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import bodyParser from "body-parser";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
@@ -23,14 +24,26 @@ env.config();
 
 const frontend = process.env.FRONTEND_URL;
 
+mongoose
+  .connect(process.env.MONGODB_CONNECTION_LINK)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
 app.use(
   session({
     secret: process.env.SECRET_SESSION,
-    saveUninitialized: true,
+    saveUninitialized: false,
     resave: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_CONNECTION_LINK,
+      collectionName: "sessions",
+      stringify: false,
+      autoRemove: "native",
+    }),
     cookie: {
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
@@ -48,23 +61,20 @@ app.use(
 app.use("/interview", interviewRouter);
 app.use("/api/autopost", autopost);
 
-mongoose
-  .connect(process.env.MONGODB_CONNECTION_LINK)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
 app.use("/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 
 app.get("/", async (req, res) => {
-  const users = await User.find();
-  console.log(users);
+  try {
+    const users = await User.find();
+  } catch (err) {
+    console.log(err);
+  }
   res.send("Done!").status(200);
 });
 
 app.get("/home", (req, res) => {
-  alert("hello");
   console.log("Hello");
 });
 
