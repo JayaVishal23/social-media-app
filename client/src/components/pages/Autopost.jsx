@@ -5,6 +5,7 @@ import Nav from "../Nav";
 import Leftnav from "../Leftnav";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+const backend = import.meta.env.VITE_API_URL;
 
 // Custom hook for speech recognition
 const useSpeechRecognition = () => {
@@ -97,6 +98,7 @@ const AutoPostPage = () => {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [isCopied, setIsCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef(null);
   const {
     isListening,
@@ -136,8 +138,9 @@ const AutoPostPage = () => {
   };
   const postit = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.post(
-        "http://localhost:5000/api/autopost/chat",
+        `${backend}/api/autopost/chat`,
         { inp: text },
         {
           headers: {
@@ -153,6 +156,8 @@ const AutoPostPage = () => {
     } catch (err) {
       alert("autopost problem please try again");
       navigate("/home");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -170,43 +175,52 @@ const AutoPostPage = () => {
                 simplified.
               </p>
             </header>
-
-            <div className="post-box">
-              <div
-                className={`textarea-wrapper ${
-                  isListening ? "listening-bg" : ""
-                }`}
-              >
-                <textarea
-                  ref={textareaRef}
-                  value={text}
-                  onChange={handleTextChange}
-                  placeholder="What's on your mind?"
-                  className="textarea"
-                />
-                {isListening && (
-                  <div className="listening-indicator">Listening...</div>
-                )}
+            {isLoading ? (
+              <div className="spin-load_">
+                <span className="loader__"></span>
               </div>
-
-              <div className="action-row">
-                <VoiceButton
-                  isListening={isListening}
-                  onStart={startListening}
-                  onStop={stopListening}
-                  disabled={!hasRecognitionSupport}
-                />
-
-                <button
-                  onClick={postit}
-                  disabled={!text}
-                  className={`copy-button ${!text ? "disabled" : ""}`}
+            ) : (
+              <div className="post-box">
+                <div
+                  className={`textarea-wrapper ${
+                    isListening ? "listening-bg" : ""
+                  }`}
                 >
-                  <ClipboardCopy size={16} />
-                  <span>{isCopied ? "Posting!" : "post"}</span>
-                </button>
+                  <textarea
+                    ref={textareaRef}
+                    value={text}
+                    onChange={handleTextChange}
+                    placeholder="What's on your mind?"
+                    className="textarea"
+                  />
+                  {isListening && (
+                    <div className="listening-indicator">Listening...</div>
+                  )}
+                </div>
+
+                <div className="action-row">
+                  <VoiceButton
+                    isListening={isListening}
+                    onStart={startListening}
+                    onStop={stopListening}
+                    disabled={!hasRecognitionSupport}
+                  />
+
+                  <button
+                    onClick={postit}
+                    disabled={!text}
+                    className={`copy-button ${!text ? "disabled" : ""}`}
+                  >
+                    <ClipboardCopy size={16} />
+                    {isLoading ? (
+                      <span className="loader"></span>
+                    ) : (
+                      <span>{isCopied ? "Posting!" : "Post"}</span>
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -16,6 +16,7 @@ const Profile = () => {
   const [followerusers, setFollowerUsers] = useState(null);
   const [follow, setFollow] = useState(false);
   const [edit, setEdit] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [changed, setchanged] = useState({
     username: "",
     email: "",
@@ -41,6 +42,7 @@ const Profile = () => {
   }, [user]);
   const fetchUser = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.get(`${backend}/api/users/getuserself`, {
         withCredentials: true,
       });
@@ -48,6 +50,8 @@ const Profile = () => {
       setUser(response.data.user || response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -155,6 +159,11 @@ const Profile = () => {
         </div>
       ) : (
         <div className="profile-card">
+          {isLoading && (
+            <div className="spin-load">
+              <span className="loader_"></span>
+            </div>
+          )}
           {fetched && user && (
             <>
               <div className="profile-main-info">

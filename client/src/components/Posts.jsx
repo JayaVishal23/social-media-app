@@ -8,12 +8,14 @@ const Posts = () => {
   const backend = import.meta.env.VITE_API_URL;
   const [posts, setPosts] = useState([]);
   const [curUser, setCurUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
   const fetchPosts = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.get(`${backend}/api/posts/allposts`, {
         withCredentials: true,
@@ -25,11 +27,18 @@ const Posts = () => {
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="posts-home">
+      {isLoading && (
+        <div className="spin-load">
+          <span className="loader_"></span>
+        </div>
+      )}
       {posts.map((post, index) => (
         <PostCard
           key={index}

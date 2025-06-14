@@ -6,6 +6,8 @@ export default function Rightnav({ initialChatHistory = [] }) {
   const backend = import.meta.env.VITE_API_URL;
   const [chatHistory, setChatHistory] = useState(initialChatHistory);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const chatBodyRef = useRef(null);
 
   const handleSubmit = async (e) => {
@@ -14,14 +16,21 @@ export default function Rightnav({ initialChatHistory = [] }) {
     if (!input.trim()) return;
 
     const userMessage = input.trim();
-
-    const res = await fetch(`${backend}/interview/api/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ inp: userMessage }),
-    });
+    let res;
+    try {
+      setIsLoading(true);
+      res = await fetch(`${backend}/interview/api/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ inp: userMessage }),
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
 
     const data = await res.json();
 
@@ -62,20 +71,24 @@ export default function Rightnav({ initialChatHistory = [] }) {
           required
         />
         <button type="submit" className="chat-send">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6 svg-send"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-            />
-          </svg>
+          {!isLoading ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6 svg-send"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+              />
+            </svg>
+          ) : (
+            <span className="loader"></span>
+          )}
         </button>
       </form>
     </div>
