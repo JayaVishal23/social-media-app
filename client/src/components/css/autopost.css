@@ -47,11 +47,22 @@
   background-color: #f4ebff;
 }
 
-.textarea,
-.input-box {
+.textarea {
   width: 100%;
   background: transparent;
   border: none;
+  outline: none;
+  resize: none;
+  color: #333;
+  font-size: 1rem;
+  min-height: 120px;
+  line-height: 1.5;
+}
+.input-box {
+  width: 100%;
+  background: transparent;
+  border: 1px solid black;
+  border-radius: 15px;
   outline: none;
   resize: none;
   color: #333;
