@@ -156,7 +156,7 @@ const AutoPostPage = () => {
           withCredentials: true,
         }
       );
-
+      console.log(airesponse);
       const generatedPost = airesponse.data.generated_post;
       const response = await axios.post(
         `${backend}/api/autopost/chat`,
@@ -177,6 +177,7 @@ const AutoPostPage = () => {
       }
     } catch (err) {
       alert("autopost problem please try again");
+      console.log(err);
       navigate("/home");
     } finally {
       setIsLoading(false);
@@ -220,23 +221,20 @@ const AutoPostPage = () => {
                   )}
                 </div>
 
-                <div
-                  className="tone-words-row"
-                  style={{ display: "flex", gap: "10px", marginTop: "10px" }}
-                >
+                <div className="tone-words-row">
                   <input
                     type="text"
                     value={tone}
                     onChange={(e) => setTone(e.target.value)}
                     placeholder="Tone..."
-                    style={{ flex: 1 }}
+                    className="input-box"
                   />
                   <input
                     type="number"
                     value={words}
                     onChange={(e) => setWords(e.target.value)}
                     placeholder="Number of words"
-                    style={{ flex: 1 }}
+                    className="input-box"
                   />
                 </div>
 

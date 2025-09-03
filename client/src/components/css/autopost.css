@@ -47,7 +47,8 @@
   background-color: #f4ebff;
 }
 
-.textarea {
+.textarea,
+.input-box {
   width: 100%;
   background: transparent;
   border: none;
@@ -57,6 +58,15 @@
   font-size: 1rem;
   min-height: 120px;
   line-height: 1.5;
+}
+.tone-words-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tone-words-row .input-box {
+  flex: 1;
 }
 
 .listening-indicator {
