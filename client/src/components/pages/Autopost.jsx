@@ -6,6 +6,7 @@ import Leftnav from "../Leftnav";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 const backend = import.meta.env.VITE_API_URL;
+const backendagent = import.meta.env.VITE_AGENT_API_URL;
 
 // Custom hook for speech recognition
 const useSpeechRecognition = () => {
@@ -97,6 +98,8 @@ const VoiceButton = ({ isListening, onStart, onStop, disabled }) => {
 const AutoPostPage = () => {
   const navigate = useNavigate();
   const [text, setText] = useState("");
+  const [tone, setTone] = useState("");
+  const [words, setWords] = useState("");
   const [isCopied, setIsCopied] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef(null);
@@ -139,9 +142,13 @@ const AutoPostPage = () => {
   const postit = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.post(
-        `${backend}/api/autopost/chat`,
-        { inp: text },
+      const airesponse = await axios.post(
+        `${backendagent}/generate`,
+        {
+          topic: text,
+          tone: tone,
+          word_count: words,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -150,6 +157,21 @@ const AutoPostPage = () => {
         }
       );
 
+      const generatedPost = airesponse.data.generated_post;
+      const response = await axios.post(
+        `${backend}/api/autopost/chat`,
+        {
+          title: "AI Generated Post",
+          text: generatedPost,
+          media: [],
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
       if (response.status === 201) {
         navigate("/home");
       }
@@ -196,6 +218,26 @@ const AutoPostPage = () => {
                   {isListening && (
                     <div className="listening-indicator">Listening...</div>
                   )}
+                </div>
+
+                <div
+                  className="tone-words-row"
+                  style={{ display: "flex", gap: "10px", marginTop: "10px" }}
+                >
+                  <input
+                    type="text"
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value)}
+                    placeholder="Tone..."
+                    style={{ flex: 1 }}
+                  />
+                  <input
+                    type="number"
+                    value={words}
+                    onChange={(e) => setWords(e.target.value)}
+                    placeholder="Number of words"
+                    style={{ flex: 1 }}
+                  />
                 </div>
 
                 <div className="action-row">

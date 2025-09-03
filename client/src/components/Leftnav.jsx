@@ -14,7 +14,7 @@ const Leftnav = () => {
       });
       navigate("/");
     } catch (err) {
-      console.error("Logout failed", error);
+      console.error("Logout failed", err);
     }
   };
 
