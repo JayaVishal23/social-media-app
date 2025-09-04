@@ -15,6 +15,7 @@ import Profile from "../assets/profile-user-svgrepo-com.svg";
 import CreateP from "./CreateP";
 import Commentbox from "./Commentbox";
 import dotenv from "dotenv";
+import ReactMarkdown from "react-markdown";
 
 const PostCard = ({
   title,
@@ -230,8 +231,11 @@ const PostCard = ({
         <h2 className="post-title">{title}</h2>
 
         {!extended ? (
-          <p className="post-text">
-            {previewText}
+          <div
+            className="prose max-w-none post-text"
+            style={{ whiteSpace: "pre-line" }}
+          >
+            <ReactMarkdown>{previewText}</ReactMarkdown>
             {showMore && (
               <span
                 className="more-text"
@@ -242,19 +246,21 @@ const PostCard = ({
                 ...more
               </span>
             )}
-          </p>
+          </div>
         ) : (
-          <p className="post-text">
-            {text}
+          <div
+            className="prose max-w-none post-text"
+            style={{ whiteSpace: "pre-line" }}
+          >
+            <ReactMarkdown>{text}</ReactMarkdown>
             <span
               className="more-text"
-              onClick={() => setExtend(!extended)}
+              onClick={() => setExtend(false)}
               style={{ color: "blue", cursor: "pointer" }}
             >
-              {" "}
               ...less
             </span>
-          </p>
+          </div>
         )}
 
         <div className="post-images">

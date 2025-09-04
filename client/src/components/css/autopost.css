@@ -62,13 +62,15 @@
   width: 100%;
   height: 50px;
   background: transparent;
-  border: 1px solid black;
+  border: 2px solid black;
   border-radius: 15px;
   outline: none;
   resize: none;
   color: #333;
   font-size: 1rem;
   line-height: 1.5;
+  padding: 2px;
+  margin-bottom: 10px;
 }
 .tone-words-row {
   display: flex;

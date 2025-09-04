@@ -103,6 +103,7 @@ const AutoPostPage = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef(null);
+  const [status, setStatus] = useState("");
   const {
     isListening,
     transcript,
@@ -139,30 +140,60 @@ const AutoPostPage = () => {
       }
     }
   };
+  function extractTitleAndCleanPost(markdown) {
+    const lines = markdown.split("\n");
+    let title = "AI Generated Post";
+    let newLines = [];
+    let foundTitle = false;
+
+    for (let line of lines) {
+      const trimmed = line.trim();
+
+      if (!foundTitle && /^#{1,6}\s+/.test(trimmed)) {
+        title = trimmed.replace(/^#{1,6}\s+/, "");
+        foundTitle = true;
+        continue;
+      }
+
+      if (!foundTitle && /^\*\*(.+)\*\*$/.test(trimmed)) {
+        title = trimmed.replace(/^\*\*(.+)\*\*$/, "$1");
+        foundTitle = true;
+        continue;
+      }
+
+      newLines.push(line);
+    }
+
+    return { title, cleanedPost: newLines.join("\n").trim() };
+  }
+
   const postit = async () => {
     try {
+      const payload = {
+        topic: text,
+        tone: tone || "Neutral",
+        word_count: words ? parseInt(words, 10) : 300, // default 300 words
+      };
       setIsLoading(true);
-      const airesponse = await axios.post(
-        `${backendagent}/generate`,
-        {
-          topic: text,
-          tone: tone,
-          word_count: words,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      console.log(airesponse);
-      const generatedPost = airesponse.data.generated_post;
+      setStatus("generating");
+
+      const airesponse = await axios.post(`${backendagent}/generate`, payload, {
+        headers: { "Content-Type": "application/json" },
+        timeout: 60000,
+      });
+
+      const generatedPost = airesponse?.data?.generated_post;
+      if (!generatedPost) {
+        throw new Error("AI did not generate a post.");
+      }
+      const { title: extractedTitle, cleanedPost } =
+        extractTitleAndCleanPost(generatedPost);
+      setStatus("posting");
       const response = await axios.post(
         `${backend}/api/autopost/chat`,
         {
-          title: "AI Generated Post",
-          text: generatedPost,
+          title: extractedTitle,
+          text: cleanedPost,
           media: [],
         },
         {
@@ -232,9 +263,13 @@ const AutoPostPage = () => {
                   <input
                     type="number"
                     value={words}
-                    onChange={(e) => setWords(e.target.value)}
+                    onChange={(e) => {
+                      const val = Math.min(1000, Number(e.target.value));
+                      setWords(val);
+                    }}
                     placeholder="Number of words"
                     className="input-box"
+                    max={1000}
                   />
                 </div>
 
@@ -248,14 +283,17 @@ const AutoPostPage = () => {
 
                   <button
                     onClick={postit}
-                    disabled={!text}
+                    disabled={!text || isLoading}
                     className={`copy-button ${!text ? "disabled" : ""}`}
                   >
                     <ClipboardCopy size={16} />
                     {isLoading ? (
-                      <span className="loader"></span>
+                      <span>
+                        {status === "generating" && "Waiting for AI..."}
+                        {status === "posting" && "Posting..."}
+                      </span>
                     ) : (
-                      <span>{isCopied ? "Posting!" : "Post"}</span>
+                      <span>Post</span>
                     )}
                   </button>
                 </div>
