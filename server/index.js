@@ -26,10 +26,20 @@ env.config();
 
 const frontend = process.env.FRONTEND_URL;
 
-mongoose
-  .connect(process.env.MONGODB_CONNECTION_LINK)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_CONNECTION_LINK, {
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+    });
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err.message);
+    process.exit(1);
+  }
+};
+
+connectDB();
 
 app.use(
   session({
@@ -37,17 +47,18 @@ app.use(
     saveUninitialized: false,
     resave: false,
     store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_CONNECTION_LINK,
+      client: mongoose.connection.getClient(),
       collectionName: "sessions",
       stringify: false,
       autoRemove: "native",
     }),
+
     cookie: {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
     },
-  })
+  }),
 );
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
@@ -57,7 +68,7 @@ app.use(
   cors({
     origin: `${frontend}`,
     credentials: true,
-  })
+  }),
 );
 // app.use(cors({ origin: true, credentials: true }));
 app.use("/interview", interviewRouter);
@@ -73,13 +84,26 @@ app.get("/", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
-  res.send("Done!").status(200);
+  res.status(200).send("Done!");
 });
 
 app.get("/home", (req, res) => {
-  console.log("Hello");
+  // console.log("Hello");
+  res.status(200).json({ message: "Home OK" });
+});
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
 });
 
 app.listen(port, () => {
   console.log("Listening on port " + port);
 });
+
+// JWT Authentication
+// Real time messaging - Web sockets
+// Redis pub/sub
+// Kafka - Guarantees reliability and scalability.
+// Change to Typescript
+// Docker
+//

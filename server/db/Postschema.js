@@ -54,7 +54,7 @@ const postSchema = mongoose.Schema(
       default: [],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 postSchema.index({ user: 1, createdAt: -1 });
