@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import Post from "../db/Postschema.js";
 import upload from "../middleware/upload.js";
 import User from "../db/Userschema.js";
@@ -6,28 +7,69 @@ import isAuthenticated from "../middleware/isAuth.js";
 
 const router = express.Router();
 
+// Personalized, paginated feed.
+//   ?feed=following  -> posts from people you follow (plus your own)
+//   ?feed=explore    -> all posts (default)
+//   ?cursor=<_id>    -> keyset cursor: return posts older than this _id
+//   ?limit=<n>       -> page size (default 10, max 50)
+//
+// Keyset pagination on the indexed _id field (ObjectIds are monotonic by
+// creation time) avoids the O(n) cost of skip() on large offsets. The
+// per-post flags (isliked/issaved/isfollowing/isowner/numlikes) are computed
+// inside an aggregation pipeline instead of in JS, so the DB does the set
+// membership work and we ship a slimmer payload (likes/comments arrays dropped).
 router.get("/allposts", isAuthenticated, async (req, res) => {
   try {
-    const user = req.user;
-    let posts = await Post.find()
-      .sort({ createdAt: -1 })
-      .populate("user", "_id username fullname profile");
-    const newPosts = posts.map((post) => {
-      const isliked = user.likedposts.includes(post._id);
-      const issaved = user.savedposts.includes(post._id);
-      const isowner = post.user._id.toString() === req.user._id.toString();
-      const isfollowing = user.following.includes(post.user._id.toString());
-      return {
-        ...post.toObject(),
-        isliked,
-        issaved,
-        isowner,
-        isfollowing,
-        numlikes: post.likes.length,
-      };
-    });
+    const me = req.user;
+    const limit = Math.min(parseInt(req.query.limit, 10) || 10, 50);
+    const feed = req.query.feed === "following" ? "following" : "explore";
 
-    res.status(200).json(newPosts);
+    const match = {};
+
+    if (req.query.cursor) {
+      if (!mongoose.Types.ObjectId.isValid(req.query.cursor)) {
+        return res.status(400).json({ message: "Invalid cursor" });
+      }
+      match._id = { $lt: new mongoose.Types.ObjectId(req.query.cursor) };
+    }
+
+    if (feed === "following") {
+      match.user = { $in: [...me.following, me._id] };
+    }
+
+    const posts = await Post.aggregate([
+      { $match: match },
+      { $sort: { _id: -1 } },
+      { $limit: limit + 1 }, // fetch one extra to detect a next page
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+          pipeline: [
+            { $project: { _id: 1, username: 1, fullname: 1, profile: 1 } },
+          ],
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $addFields: {
+          numlikes: { $size: "$likes" },
+          isliked: { $in: ["$_id", me.likedposts] },
+          issaved: { $in: ["$_id", me.savedposts] },
+          isowner: { $eq: ["$user._id", me._id] },
+          isfollowing: { $in: ["$user._id", me.following] },
+        },
+      },
+      { $project: { likes: 0, comments: 0 } },
+    ]);
+
+    const hasMore = posts.length > limit;
+    if (hasMore) posts.pop(); // remove the extra probe item
+    const nextCursor = hasMore ? posts[posts.length - 1]._id : null;
+
+    res.status(200).json({ posts, nextCursor, hasMore });
   } catch (err) {
     console.log("Error in postRoutes" + err);
     res.status(500).json({ message: "Internal server error" });

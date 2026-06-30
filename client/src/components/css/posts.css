@@ -213,3 +213,44 @@
     transform: rotate(360deg);
   }
 }
+
+.feed-tabs {
+  display: flex;
+  gap: 8px;
+  width: 95%;
+  max-width: 750px;
+  margin: 20px auto 0 auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.feed-tab {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #555;
+  background-color: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.feed-tab:hover {
+  background-color: #f4f6fa;
+}
+
+.feed-tab.active {
+  background-color: #27548a;
+  border-color: #27548a;
+  color: #ffffff;
+}
+
+.feed-empty,
+.feed-end {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 24px auto;
+}
