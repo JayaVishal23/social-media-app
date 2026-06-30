@@ -14,7 +14,6 @@ import "../components/css/posts.css";
 import Profile from "../assets/profile-user-svgrepo-com.svg";
 import CreateP from "./CreateP";
 import Commentbox from "./Commentbox";
-import dotenv from "dotenv";
 import ReactMarkdown from "react-markdown";
 
 const PostCard = ({
@@ -52,20 +51,30 @@ const PostCard = ({
   const showMore = text.length > previewText.length || imageUrls.length > 1;
 
   const likeunlikeit = async () => {
+    const prevLiked = liked;
+    const prevCount = likeCount;
+    const nextLiked = !prevLiked;
+
+    // Optimistic update: reflect the change instantly, before the network call.
+    setLiked(nextLiked);
+    setLikeCount(Math.max(prevCount + (nextLiked ? 1 : -1), 0));
+
     try {
       const result = await axios.post(
         `${backend}/api/posts/likeunlikeit`,
         { postId: postId },
         { withCredentials: true }
       );
-      if (result.data.liked) {
-        setLikeCount((prev) => prev + 1);
-        setLiked(true);
-      } else if (!result.data.liked) {
-        setLikeCount((prev) => Math.max(prev - 1, 0));
-        setLiked(false);
-      }
+      // Reconcile with the server's truth in case local state was stale.
+      const serverLiked = result.data.liked;
+      setLiked(serverLiked);
+      setLikeCount(
+        Math.max(prevCount + ((serverLiked ? 1 : 0) - (prevLiked ? 1 : 0)), 0)
+      );
     } catch (err) {
+      // Roll back the optimistic change on failure.
+      setLiked(prevLiked);
+      setLikeCount(prevCount);
       console.error("Failed to like/unlike post Frontend:", err);
       if (err.response && err.response.status === 401) {
         navigate("/");
@@ -74,18 +83,20 @@ const PostCard = ({
   };
 
   const saveunsaveit = async () => {
+    const prevSaved = saved;
+
+    // Optimistic update: toggle the bookmark instantly.
+    setSaved(!prevSaved);
+
     try {
       const result = await axios.post(
         `${backend}/api/posts/saveunsaveit`,
         { postId: postId },
         { withCredentials: true }
       );
-      if (result.data.saved) {
-        setSaved(true);
-      } else if (!result.data.saved) {
-        setSaved(false);
-      }
+      setSaved(result.data.saved); // reconcile with server truth
     } catch (err) {
+      setSaved(prevSaved); // roll back on failure
       console.error("Failed to save/unsave post Frontend:", err);
       if (err.response && err.response.status === 401) {
         navigate("/");
