@@ -1,45 +1,74 @@
 import axios from "axios";
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Profile from "../assets/profile-user-svgrepo-com.svg";
-import dotenv from "dotenv";
 
-const Commentbox = ({ postId, isfollowing }) => {
+const Commentbox = ({ postId }) => {
   const backend = import.meta.env.VITE_API_URL;
   const [commentText, setCommentText] = useState("");
   const [prevComments, setPrevComments] = useState([]);
-  const [follow, setFollow] = useState(isfollowing);
+  const [me, setMe] = useState(null);
 
+  // Load existing comments and the current user once, in parallel, when the
+  // box opens. Knowing "me" up front lets us render new comments optimistically
+  // (with the right avatar/name) instead of refetching the post after sending.
   useEffect(() => {
-    const commentfunction = async () => {
-      const res = await axios.post(
-        `${backend}/api/posts/getpost`,
-        { postid: postId },
-        { withCredentials: true }
-      );
-      setPrevComments(res.data.comments || []);
-      console.log(res.data.comments);
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        const [postRes, meRes] = await Promise.all([
+          axios.post(
+            `${backend}/api/posts/getpost`,
+            { postid: postId },
+            { withCredentials: true }
+          ),
+          axios.get(`${backend}/auth/check`, { withCredentials: true }),
+        ]);
+        if (cancelled) return;
+        setPrevComments(postRes.data.comments || []);
+        setMe(meRes.data.user || null);
+      } catch (err) {
+        console.log(err);
+      }
     };
 
-    commentfunction();
-  }, [postId]);
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [postId, backend]);
 
   const addCommment = async () => {
+    const text = commentText.trim();
+    if (!text) return;
+
+    // Optimistically show the comment immediately and clear the input.
+    const tempId = `temp-${Date.now()}`;
+    const optimistic = {
+      _id: tempId,
+      text,
+      user: {
+        _id: me?._id,
+        username: me?.username,
+        fullname: me?.fullname,
+        profile: me?.profile,
+      },
+    };
+    setPrevComments((prev) => [...prev, optimistic]);
+    setCommentText("");
+
     try {
-      const result = await axios.put(
+      await axios.put(
         `${backend}/api/posts/addcomment`,
-        { postId: postId, comment: commentText },
+        { postId: postId, comment: text },
         { withCredentials: true }
       );
-      setCommentText("");
-      const res = await axios.post(
-        `${backend}/api/posts/getpost`,
-        { postid: postId },
-        { withCredentials: true }
-      );
-      setPrevComments(res.data.comments || []);
+      // Saved — the optimistic comment already matches the persisted one,
+      // so there's no need to refetch the whole post.
     } catch (err) {
+      // Roll back and restore the text so the user can retry.
+      setPrevComments((prev) => prev.filter((c) => c._id !== tempId));
+      setCommentText(text);
       console.log(err);
     }
   };
@@ -52,15 +81,14 @@ const Commentbox = ({ postId, isfollowing }) => {
         ) : (
           prevComments.map((comment, ind) => {
             return (
-              <div key={ind} className="cmt-main">
+              <div key={comment._id || ind} className="cmt-main">
                 <div className="post-header cmt-box-profile">
                   <img
-                    src={comment.user.profile}
+                    src={comment.user?.profile}
                     alt="profile"
                     referrerPolicy="no-referrer"
                     className="profile-imgs cmt-profile-image"
                     onError={(e) => {
-                      console.log("Image load error:", e.target.src);
                       e.target.onerror = null;
                       e.target.src = Profile;
                     }}
@@ -84,6 +112,7 @@ const Commentbox = ({ postId, isfollowing }) => {
           placeholder="write Comment..."
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && addCommment()}
           className="cmt-input"
         />
         <button onClick={addCommment} className="cmt-send">
